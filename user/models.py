@@ -14,7 +14,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     phone_number = PhoneNumberField(unique=True)
-    profile_pitcure = models.ImageField()
+    profile_picture = models.ImageField()
     about = models.TextField()
     status = models.BooleanField(default=False)
     birth_date = models.DateField()
@@ -24,15 +24,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'user_name'
 
 
-class UserPost():
-    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
-
-
-class UserFriend():
+class UserFriend(models.Model):
     source_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     target_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     status = models.SmallIntegerField()
@@ -41,7 +33,7 @@ class UserFriend():
     notes = models.CharField(max_length=500)
 
 
-class UserMessage():
+class UserMessage(models.Model):
     source_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     target_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     content = models.TextField()
@@ -49,7 +41,7 @@ class UserMessage():
     updated_at = models.DateTimeField(auto_now_add=True)
 
 
-class UserFollower():
+class UserFollower(models.Model):
     source_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     target_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     status = models.BooleanField(default=False)
