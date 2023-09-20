@@ -25,8 +25,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class UserFriend(models.Model):
-    source_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    target_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    source_id = models.ForeignKey(
+        'CustomUser', on_delete=models.CASCADE, related_name='user_friends')
+    target_id = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
     status = models.SmallIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
@@ -34,16 +35,20 @@ class UserFriend(models.Model):
 
 
 class UserMessage(models.Model):
-    source_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    target_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    source_id = models.ForeignKey(
+        'CustomUser', on_delete=models.CASCADE, related_name='sent_messages')
+    target_id = models.ForeignKey(
+        'CustomUser', on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
 
 
 class UserFollower(models.Model):
-    source_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    target_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    source_id = models.ForeignKey(
+        'CustomUser', on_delete=models.CASCADE, related_name='followers')
+    target_id = models.ForeignKey(
+        'CustomUser', on_delete=models.CASCADE, related_name='following')
     status = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
