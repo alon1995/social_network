@@ -7,13 +7,12 @@ from django.utils import timezone
 
 # Create your views here.
 
-
-
 @api_view(['GET'])  # a list of allowed methods
 def get_all_users(request):
     all_users = CustomUser.objects.all()
     serializer = CustomUserSerializer(all_users, many=True)  # setting amny to true tells our serializer that we are going to serialize multpule items
     return Response(serializer.data)
+
 
 @api_view(['POST'])
 def create_new_user(requset):
@@ -21,6 +20,7 @@ def create_new_user(requset):
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
+
 
 @api_view(['DELETE'])
 def delete_user(request, pk):
@@ -36,8 +36,9 @@ def delete_user(request, pk):
     user.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 @api_view(['PUT', 'PATCH'])  # Allow both PUT and PATCH methods
-def updateItem(request, pk):
+def update_user(request, pk):
     try:
         user = CustomUser.objects.get(pk=pk)
     except CustomUser.DoesNotExist:

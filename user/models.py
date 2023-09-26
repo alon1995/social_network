@@ -23,9 +23,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     last_login = User.last_login
     is_deleted = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now_add=True) 
 
     USERNAME_FIELD = 'user_name'
-
 
 class UserFriend(models.Model):
     source_id = models.ForeignKey(
