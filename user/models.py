@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, User
 from phonenumber_field.modelfields import PhoneNumberField
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -11,6 +12,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30)
     user_name = models.CharField(max_length=30, unique=True)
     password = models.CharField(max_length=30)
+    confirm_password = models.CharField(default='', max_length=30)
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     phone_number = PhoneNumberField(unique=True)
@@ -20,6 +22,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     birth_date = models.DateField()
     is_staff = models.BooleanField(default=False)
     last_login = User.last_login
+    is_deleted = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'user_name'
 
