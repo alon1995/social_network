@@ -6,7 +6,7 @@ from .serializers import *
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from rest_framework.views import APIView
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 
@@ -75,11 +75,7 @@ class CustomUserLoginView(APIView):
         username = request.data.get('username')
         password = request.data.get('password')
 
-        print(username)
-        print(password)
         user = authenticate(request, username=username, password=password)
-        print(username)
-        print(password)
 
         if user is not None:
             login(request, user)
@@ -91,4 +87,8 @@ class CustomUserLoginView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-
+class CustomLogoutView(APIView):
+    def post(self, request):
+        # Call the logout method to log the user out
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
