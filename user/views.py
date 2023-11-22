@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login, logout
+from rest_framework.authtoken.models import Token
+
 
 # Create your views here.
 
@@ -78,9 +80,27 @@ class CustomUserLoginView(APIView):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
+            user.status = True
+            user.save()  # Save the user instance to persist the status change
+
             login(request, user)
+            # Check if an existing token exists for the user
+            existing_token = Token.objects.filter(user=user)
+
+            if existing_token:
+                # Delete the existing token
+                existing_token.delete()
+
+            # Create a new token for the user
+            token = Token.objects.create(user=user)
+            token.save()
+
+            # Return the token along with the user data
             serializer = CustomUserSerializer(user)
-            return Response(serializer.data)
+            return Response({
+                "token": token.key,
+                "user": serializer.data
+            })
         else:
             return Response(
                 {'error': 'Invalid credentials'},
@@ -89,6 +109,16 @@ class CustomUserLoginView(APIView):
 
 class CustomLogoutView(APIView):
     def post(self, request):
-        # Call the logout method to log the user out
-        logout(request)
-        return Response(status=status.HTTP_200_OK)
+        # Get the user who is currently logged in
+        user = request.user
+
+        if user.is_authenticated:
+            # Update the status to False when the user logs out
+            user.status = False
+            user.save()
+
+            # Call the logout method to log the user out
+            logout(request)
+            return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'User not logged in'}, status=status.HTTP_400_BAD_REQUEST)
